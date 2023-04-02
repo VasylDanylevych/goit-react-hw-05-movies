@@ -41,6 +41,7 @@ export const Button = styled(Link)`
   border-radius: 4px;
   padding: 6px 12px;
   margin-bottom: 25px;
+  background-color: rgb(192, 192, 192);
 
   &.active {
     color: #dc143c;
