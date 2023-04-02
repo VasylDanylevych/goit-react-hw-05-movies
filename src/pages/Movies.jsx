@@ -1,31 +1,65 @@
-import { useState } from 'react';
 import { FormEl, Input } from './Movies.style';
 import { useSearchParams } from 'react-router-dom';
+import { MoviesList } from 'components/MoviesList/MoviesList';
+import { Container } from './Home.style';
+import { useCallback, useEffect, useState } from 'react';
+import MoviesApi from 'services/Api';
+
+const moviesApi = new MoviesApi();
 
 export default function Movies() {
-  const [movie, setMovie] = useState('');
+  const [movies, setMovie] = useState([]);
+  const [shouldFetchData, setShouldFetchData] = useState(false);
   const [searchParams, setSearchParams] = useSearchParams();
-  const query = searchParams.get('query');
+  const query = searchParams.get('query') ?? '';
 
-  const handleSubmit = evt => {
+  const handleSubmit = useCallback(evt => {
     evt.preventDefault();
-    setSearchParams({ query: evt.target.value });
-    console.log('movie: ', movie);
-    console.log('query: ', query);
+    setShouldFetchData(true);
+  }, []);
+
+  useEffect(() => {
+    async function fetchMovies() {
+      if (query !== '') {
+        try {
+          const data = await moviesApi.getMoviesOnQuery(query);
+          setMovie(data.results);
+        } catch (error) {
+          console.log(error);
+        } finally {
+          setShouldFetchData(false);
+        }
+      } else {
+        setMovie([]);
+      }
+    }
+    if (shouldFetchData) {
+      fetchMovies();
+    }
+  }, [query, shouldFetchData]);
+
+  const updateQuery = e => {
+    const queryValue = e.target.value;
+    if (queryValue !== '') {
+      return setSearchParams({ query: queryValue });
+    }
+    setSearchParams({});
   };
 
   return (
-    <FormEl onSubmit={handleSubmit}>
-      <Input
-        type="text"
-        name="movie"
-        pattern="^[a-zA-Zа-яА-Я]+(([' -][a-zA-Zа-яА-Я ])?[a-zA-Zа-яА-Я]*)*$"
-        required
-        value={movie}
-        onChange={e => setMovie(e.target.value)}
-      />
-      <button type="submit">Search</button>
-    </FormEl>
+    <Container>
+      <FormEl onSubmit={handleSubmit}>
+        <Input
+          type="text"
+          name="movie"
+          pattern="^[a-zA-Zа-яА-Я]+(([' -][a-zA-Zа-яА-Я ])?[a-zA-Zа-яА-Я]*)*$"
+          required
+          value={query}
+          onChange={updateQuery}
+        />
+        <button type="submit">Search</button>
+      </FormEl>
+      <MoviesList movies={movies} />
+    </Container>
   );
 }
-//

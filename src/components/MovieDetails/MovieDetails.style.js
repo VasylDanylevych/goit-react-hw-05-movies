@@ -32,6 +32,21 @@ export const Item = styled(Link)`
   }
 `;
 
+export const Button = styled(Link)`
+  display: inline-block;
+  text-decoration: none;
+  font-size: 20px;
+  font-weight: 600;
+  border: 1px solid;
+  border-radius: 4px;
+  padding: 6px 12px;
+  margin-bottom: 25px;
+
+  &.active {
+    color: #dc143c;
+  }
+`;
+
 export const List = styled.ul`
   margin: 10px 0 10px 0;
   padding-left: 40px;
