@@ -17,7 +17,7 @@ export const MovieCard = ({ movie }) => {
       />
       <CardList>
         <li>
-          {movie.title ?? movie.name}
+          {movie.title}
           <p>User Score {movie.vote_average}</p>
         </li>
         <li>
